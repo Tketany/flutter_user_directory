@@ -1,17 +1,21 @@
-# flutter_user_directory
+# Flutter User Directory
 
-A new Flutter project.
+A Flutter app that displays a directory of users using the JSONPlaceholder API.
 
-## Getting Started
+## Features
+- Fetches users from: https://jsonplaceholder.typicode.com/users
+- User list shows: full name, email, company name
+- User details shows: name, username, email, phone, website, company (name + catch phrase), and address
+- Loading indicator while fetching
+- Error state with retry button
+- Pull-to-refresh on the list screen
 
-This project is a starting point for a Flutter application.
+## Project Structure
+- lib/models: typed models (no raw Map objects in the UI)
+- lib/services: API layer (HTTP + parsing)
+- lib/screens: UI screens
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## How to Run
+```bash
+flutter pub get
+flutter run
