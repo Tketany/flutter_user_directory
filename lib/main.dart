@@ -15,10 +15,23 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.light;
 
+  // Favorites stored by user id
+  final Set<int> _favoriteUserIds = <int>{};
+
   void _toggleTheme() {
     setState(() {
       _themeMode =
           _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  void _toggleFavorite(int userId) {
+    setState(() {
+      if (_favoriteUserIds.contains(userId)) {
+        _favoriteUserIds.remove(userId);
+      } else {
+        _favoriteUserIds.add(userId);
+      }
     });
   }
 
@@ -44,6 +57,8 @@ class _MyAppState extends State<MyApp> {
       home: UserListScreen(
         isDarkMode: _themeMode == ThemeMode.dark,
         onToggleTheme: _toggleTheme,
+        favoriteUserIds: _favoriteUserIds,
+        onToggleFavorite: _toggleFavorite,
       ),
     );
   }

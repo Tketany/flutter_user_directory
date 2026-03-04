@@ -5,7 +5,15 @@ import '../models/user.dart';
 class UserDetailScreen extends StatelessWidget {
   final User user;
 
-  const UserDetailScreen({super.key, required this.user});
+  final bool isFavorite;
+  final VoidCallback onToggleFavorite;
+
+  const UserDetailScreen({
+    super.key,
+    required this.user,
+    required this.isFavorite,
+    required this.onToggleFavorite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +23,14 @@ class UserDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(user.name),
-      ),
+        actions: [
+          IconButton(
+            tooltip: isFavorite ? 'Unfavorite' : 'Favorite',
+            onPressed: onToggleFavorite,
+            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
+          ),
+        ],
+    ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

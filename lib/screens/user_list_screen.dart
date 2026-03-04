@@ -7,12 +7,16 @@ import 'user_detail_screen.dart';
 class UserListScreen extends StatefulWidget {
   final bool isDarkMode;
   final VoidCallback onToggleTheme;
+  final Set<int> favoriteUserIds;
+  final void Function(int userId) onToggleFavorite;
 
-  const UserListScreen({
-    super.key,
-    required this.isDarkMode,
-    required this.onToggleTheme,
-  });
+ const UserListScreen({
+  super.key,
+  required this.isDarkMode,
+  required this.onToggleTheme,
+  required this.favoriteUserIds,
+  required this.onToggleFavorite,
+});
 
   @override
   State<UserListScreen> createState() => _UserListScreenState();
@@ -23,6 +27,8 @@ class _UserListScreenState extends State<UserListScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   final UserService _service = UserService();
+
+  bool _showFavoritesOnly = false;
 
   bool _isLoading = false;
   String? _error;
@@ -65,20 +71,30 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   void _openDetails(User user) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => UserDetailScreen(user: user)),
-    );
-  }
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => UserDetailScreen(
+        user: user,
+        isFavorite: widget.favoriteUserIds.contains(user.id),
+        onToggleFavorite: () => widget.onToggleFavorite(user.id),
+      ),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     final q = _query.trim().toLowerCase();
     final filteredUsers = _users.where((u) {
+      if (_showFavoritesOnly && !widget.favoriteUserIds.contains(u.id)) {
+        return false;
+      }
+
       if (q.isEmpty) return true;
-      return u.name.toLowerCase().contains(q) ||
-          u.email.toLowerCase().contains(q) ||
-          u.company.name.toLowerCase().contains(q);
+        return u.name.toLowerCase().contains(q) ||
+            u.email.toLowerCase().contains(q) ||
+            u.company.name.toLowerCase().contains(q);
     }).toList();
 
     return Scaffold(
@@ -107,6 +123,13 @@ class _UserListScreenState extends State<UserListScreen> {
             tooltip: widget.isDarkMode ? 'Light mode' : 'Dark mode',
             onPressed: widget.onToggleTheme,
             icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+          ),
+          IconButton(
+            tooltip: _showFavoritesOnly ? 'Show all' : 'Show favorites',
+            onPressed: () {
+              setState(() => _showFavoritesOnly = !_showFavoritesOnly);
+            },
+            icon: Icon(_showFavoritesOnly ? Icons.star : Icons.star_border),
           ),
         ],
       ),
@@ -143,6 +166,14 @@ class _UserListScreenState extends State<UserListScreen> {
                             isThreeLine: true,
                             trailing: const Icon(Icons.chevron_right),
                             onTap: () => _openDetails(user),
+                            leading: IconButton(
+                                onPressed: () => widget.onToggleFavorite(user.id),
+                                icon: Icon(
+                                  widget.favoriteUserIds.contains(user.id)
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                ),
+                              ),
                           );
                         },
                       ),
