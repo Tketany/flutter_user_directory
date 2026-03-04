@@ -12,6 +12,9 @@ class UserListScreen extends StatefulWidget {
 }
 
 class _UserListScreenState extends State<UserListScreen> {
+  String _query = '';
+  final TextEditingController _searchController = TextEditingController();
+
   final UserService _service = UserService();
 
   bool _isLoading = false;
@@ -22,6 +25,12 @@ class _UserListScreenState extends State<UserListScreen> {
   void initState() {
     super.initState();
     _loadUsers();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUsers() async {
@@ -57,9 +66,37 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final q = _query.trim().toLowerCase();
+    final filteredUsers = _users.where((u) {
+      if (q.isEmpty) return true;
+      return u.name.toLowerCase().contains(q) ||
+          u.email.toLowerCase().contains(q) ||
+          u.company.name.toLowerCase().contains(q);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Directory'),
+        title: TextField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            hintText: 'Search name, email, company...',
+            border: InputBorder.none,
+          ),
+          textInputAction: TextInputAction.search,
+          onChanged: (value) {
+            setState(() => _query = value);
+          },
+        ),
+        actions: [
+          IconButton(
+            tooltip: 'Clear',
+            onPressed: () {
+              _searchController.clear();
+              setState(() => _query = '');
+            },
+            icon: const Icon(Icons.clear),
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -68,26 +105,36 @@ class _UserListScreenState extends State<UserListScreen> {
                   message: _error!,
                   onRetry: _loadUsers,
                 )
-              : _users.isEmpty
-    ? const Center(child: Text('No users found'))
-    : RefreshIndicator(
-        onRefresh: _loadUsers,
-        child: ListView.separated(
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: _users.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
-          itemBuilder: (context, index) {
-            final user = _users[index];
-            return ListTile(
-              title: Text(user.name),
-              subtitle: Text('${user.email}\n${user.company.name}'),
-              isThreeLine: true,
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _openDetails(user),
-            );
-          },
-        ),
-      ),
+              : filteredUsers.isEmpty
+                  ? RefreshIndicator(
+                      onRefresh: _loadUsers,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: const [
+                          SizedBox(height: 200),
+                          Center(child: Text('No users found')),
+                        ],
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: _loadUsers,
+                      child: ListView.separated(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: filteredUsers.length,
+                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final user = filteredUsers[index];
+                          return ListTile(
+                            title: Text(user.name),
+                            subtitle:
+                                Text('${user.email}\n${user.company.name}'),
+                            isThreeLine: true,
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () => _openDetails(user),
+                          );
+                        },
+                      ),
+                    ),
     );
   }
 }
