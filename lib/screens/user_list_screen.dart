@@ -5,7 +5,14 @@ import '../services/user_service.dart';
 import 'user_detail_screen.dart';
 
 class UserListScreen extends StatefulWidget {
-  const UserListScreen({super.key});
+  final bool isDarkMode;
+  final VoidCallback onToggleTheme;
+
+  const UserListScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onToggleTheme,
+  });
 
   @override
   State<UserListScreen> createState() => _UserListScreenState();
@@ -95,6 +102,11 @@ class _UserListScreenState extends State<UserListScreen> {
               setState(() => _query = '');
             },
             icon: const Icon(Icons.clear),
+          ),
+          IconButton(
+            tooltip: widget.isDarkMode ? 'Light mode' : 'Dark mode',
+            onPressed: widget.onToggleTheme,
+            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
           ),
         ],
       ),
