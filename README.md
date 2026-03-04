@@ -1,21 +1,38 @@
 # Flutter User Directory
 
-A Flutter app that displays a directory of users using the JSONPlaceholder API.
+## Approach
 
-## Features
-- Fetches users from: https://jsonplaceholder.typicode.com/users
-- User list shows: full name, email, company name
-- User details shows: name, username, email, phone, website, company (name + catch phrase), and address
-- Loading indicator while fetching
-- Error state with retry button
-- Pull-to-refresh on the list screen
+The application is structured into three main layers:
 
-## Project Structure
-- lib/models: typed models (no raw Map objects in the UI)
-- lib/services: API layer (HTTP + parsing)
-- lib/screens: UI screens
+- **Models** (`lib/models`)  
+  Contain the data models (`User`, `Address`, `Company`) used to represent API responses.  
+  Each model includes a `fromJson` factory constructor to convert JSON data into strongly typed objects.
 
-## How to Run
+- **Services** (`lib/services`)  
+  Responsible for API communication. The `UserService` handles the HTTP request to fetch users and converts the response into model objects.
+
+- **Screens** (`lib/screens`)  
+  Contain the UI components (`UserListScreen` and `UserDetailScreen`).  
+  The UI interacts with the service layer to retrieve and display data.
+
+State management is implemented using Flutter's built-in **`setState`**, which is sufficient for this small application.
+
+---
+
+## How to Run the App
+
 ```bash
 flutter pub get
 flutter run
+
+---
+
+## How to run the tests
+flutter test
+
+---
+
+## Limitations
+-The app uses the public JSONPlaceholder API, which provides mock data.
+-Favorite users are stored in memory only and will reset when the app restarts.
+-No external state management libraries were used to keep the implementation simple.
