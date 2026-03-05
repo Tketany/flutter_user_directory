@@ -35,23 +35,39 @@ class UserDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _SectionTitle('Basic Info'),
-          _InfoRow(label: 'Name', value: user.name),
-          _InfoRow(label: 'Username', value: user.username),
-          _InfoRow(label: 'Email', value: user.email),
+          _InfoRow(label: 'Name', value: user.name, icon: Icons.person_outline),
+          _InfoRow(
+            label: 'Username',
+            value: user.username,
+            icon: Icons.alternate_email,
+          ),
+          _InfoRow(label: 'Email', value: user.email, icon: Icons.email_outlined),
 
           const SizedBox(height: 16),
           _SectionTitle('Contact'),
-          _InfoRow(label: 'Phone', value: user.phone),
-          _InfoRow(label: 'Website', value: user.website),
+          _InfoRow(label: 'Phone', value: user.phone, icon: Icons.phone_outlined),
+          _InfoRow(label: 'Website', value: user.website, icon: Icons.public),
 
           const SizedBox(height: 16),
           _SectionTitle('Company'),
-          _InfoRow(label: 'Name', value: user.company.name),
-          _InfoRow(label: 'Catch phrase', value: user.company.catchPhrase),
+          _InfoRow(
+            label: 'Name',
+            value: user.company.name,
+            icon: Icons.business_outlined,
+          ),
+          _InfoRow(
+            label: 'Catch phrase',
+            value: user.company.catchPhrase,
+            icon: Icons.format_quote_outlined,
+          ),
 
           const SizedBox(height: 16),
           _SectionTitle('Address'),
-          _InfoRow(label: 'Full address', value: address),
+          _InfoRow(
+            label: 'Full address',
+            value: address,
+            icon: Icons.location_on_outlined,
+          ),
         ],
       ),
     );
@@ -78,8 +94,9 @@ class _SectionTitle extends StatelessWidget {
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
+  final IconData? icon;
 
-  const _InfoRow({required this.label, required this.value});
+  const _InfoRow({required this.label, required this.value, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +105,12 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (icon != null) ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 8),
+              child: Icon(icon, size: 18, color: Colors.blueGrey),
+            ),
+          ],
           SizedBox(
             width: 110,
             child: Text(
