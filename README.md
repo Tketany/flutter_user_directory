@@ -25,11 +25,10 @@ State management is implemented using Flutter's built-in **`setState`**, which i
 flutter pub get
 flutter run
 
----
 
 ## How to run the tests
 flutter test
-
+```
 ---
 
 ## Limitations
