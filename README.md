@@ -32,6 +32,6 @@ flutter test
 ---
 
 ## Limitations
--The app uses the public JSONPlaceholder API, which provides mock data.
--Favorite users are stored in memory only and will reset when the app restarts.
--No external state management libraries were used to keep the implementation simple.
+- The app uses the public JSONPlaceholder API, which provides mock data.
+- Favorite users are stored in memory only and will reset when the app restarts.
+- No external state management libraries were used to keep the implementation simple.
